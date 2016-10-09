@@ -1,0 +1,13 @@
+project_identifier: joomla-patchtester
+api_key_env: 'CROWDIN_API_KEY'
+base_path: ./plugins/authentication/facebook/language
+
+files:
+  -
+    source: /en-GB/en-GB.plg_authentication_facebook.ini
+    dest: plg_authentication_facebook/en-GB.plg_authentication_facebook.ini
+    translation: /%locale%/%locale%.plg_authentication_facebook.ini
+  -
+    source: /en-GB/en-GB.plg_authentication_facebook.sys.ini
+    dest: plg_authentication_facebook/en-GB.plg_authentication_facebook.sys.ini
+    translation: /%locale%/%locale%.plg_authentication_facebook.sys.ini

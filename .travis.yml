@@ -1,0 +1,21 @@
+# Forces new Travis-CI Infrastructure
+sudo: false
+
+language: php
+
+env:
+  global:
+    - secure: "DsJNBcvx+7FxsUi3vx9ey4VLoyMMXj2GVHT/ckoXjMW5VyCU20lv6U/vkvWVFdML3Dqg5fLfonucF3gblB/KjGEcYpMPB10nEVzHsVOTH/M1m41+51REb+S/HNC/DuRJsmhvuddzXdI5yEl6Mk8PBSK21adx0QLsrkCYZ2YEcmAywdqPhTGWwgc6GoTYSEBkDGRO+r2vw7CvzlzjzF92UiNTKxBQJALV0Rn1h3rmViD0ZZgdPfsdLinZK5bcGGO/6/7lpFm1GcSPPDZM2IlrXEZTE43IMb7+g7qFgJqUzKkCYskzHbU26ZXSP6P2Oob44kgCLbsmwzDIinqVm0bpIebtknH7EbeJ9fzBv/W4tSUGjj7hhfa2gE6fvMeomui8R3Vt0Lwye2D3Iz8Se4rj4nmXKFN6StDY/KwjhrD49k+cM3jd3naW46gMnxNuzpjEruaFR6r3wVCRsKrIoMB0anJNx9qaEQdPcHlt27EImlxCWisG9kcD98NG1pnHOflQs1HEKwaPeOYMWq+gyaV/N3hedlHH2QoUxCGU4fpt/QA+dmS7/niWf6LFYieF2EAj5R9ii5yyQOlwmMxg2wacPIT1WJMljgpUTTmGqncNvz1zTJN7SvRGwQ/uP+ITwnjHXhD2i4LHHwf4i1CAJtYqdqftpA4yBasBFiM3d8aVD3c="
+    - UPDATE_CROWDIN="no"
+
+matrix:
+  include:
+    - php: 7.0
+      env: UPDATE_CROWDIN="yes"
+
+before_script:
+  # Make sure all dev dependencies are installed
+  - composer install
+
+script:
+  - if [[ $UPDATE_CROWDIN == "yes" && $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then vendor/bin/crowdin --upload; fi
