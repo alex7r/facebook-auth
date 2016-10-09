@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<project name="facebookauth"
+         basedir="." description="Facebook Authentication plugins for Joomla"
+         default="all">
+
+    <property file="./build.properties" />
+
+    <!-- Default properties, set only if not already assigned in the build.properties file -->
+    <property name="dirs.root" value="${phing.dir}" />
+    <property name="dirs.plugins" value="${dirs.root}/plugins" />
+    <property name="dirs.modules" value="${dirs.root}/modules" />
+    <property name="dirs.release" value="${dirs.root}/release" />
+    <property name="version" value="dev" />
+
+    <!--
+    ====================================================================================================
+    File sets
+    ====================================================================================================
+    -->
+
+    <fileset dir="${dirs.plugins}/authentication/facebook" id="auth_facebook">
+        <include name="**" />
+    </fileset>
+
+    <fileset dir="${dirs.plugins}/user/facebook" id="user_facebook">
+        <include name="**" />
+    </fileset>
+
+    <!--
+    ====================================================================================================
+    Tasks - General
+    ====================================================================================================
+    -->
+
+    <target name="all" description="Makes everything"
+            depends="new-release,setup-properties,build-pkg">
+    </target>
+
+    <target name="new-release" description="Create the release directory afresh">
+        <delete dir="${dirs.release}" quiet="true" includeemptydirs="true" />
+        <mkdir dir="${dirs.release}" />
+    </target>
+
+    <target name="setup-properties" description="Set up version and build properties">
+        <!-- Initialize the build.date timestamp -->
+        <tstamp>
+            <format property="build.date" pattern="%Y-%m-%d" />
+        </tstamp>
+
+        <!-- Initialize the version from the Git commit hash if a version is not already set-->
+        <if>
+            <equals arg1="${version}" arg2="dev" />
+            <then>
+                <gitlog
+                        repository="${dirs.root}"
+                        format="tformat:%h"
+                        maxCount="1"
+                        outputProperty="gitHash"
+                />
+                <!-- The git log output contains a newline. We need to trim it. -->
+                <php function="trim" returnProperty="version">
+                    <param value="rev${gitHash}" />
+                </php>
+            </then>
+        </if>
+    </target>
+
+    <!--
+	====================================================================================================
+	Tasks - Joomla! packages
+	====================================================================================================
+	-->
+
+    <target name="build-pkg" description="Builds the Joomla package file"
+            depends="build-auth-facebook,build-user-facebook">
+
+        <copy file="${dirs.root}/pkg_facebooklogin.xml" tofile="${dirs.release}/pkg_facebooklogin.xml" overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="##" endtoken="##">
+                    <token key="DATE" value="${build.date}" />
+                    <token key="VERSION" value="${version}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <copy file="${dirs.root}/CHANGELOG" tofile="${dirs.release}/CHANGELOG" overwrite="true" />
+        <copy file="${dirs.root}/LICENSE" tofile="${dirs.release}/LICENSE.txt" overwrite="true" />
+
+        <!-- Create the pkg archive -->
+        <zip destfile="${dirs.release}/pkg_facebookauth-${version}.zip"
+             includeemptydirs="true"
+             comment="Facebook Login plugins v.${version}"
+        >
+            <fileset dir="${dirs.release}">
+                <include name="pkg_*.xml" />
+                <include name="CHANGELOG" />
+                <include name="LICENSE.txt" />
+                <include name="plg_*.zip" />
+                <include name="mod_*.zip" />
+            </fileset>
+        </zip>
+
+        <delete failonerror="false" quiet="true">
+            <fileset dir="${dirs.release}">
+                <include name="*" />
+                <exclude name="pkg_*.zip" />
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="build-auth-facebook" description="Build the authentication plugin for Facebook Login"
+            depends="new-release,setup-properties">
+
+        <copy file="${dirs.plugins}/authentication/facebook/facebook.xml" tofile="${dirs.plugins}/authentication/facebook/facebook.xml" overwrite="true">
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="&lt;version&gt;.*&lt;/version&gt;" replace="&lt;version&gt;${version}&lt;/version&gt;" />
+                    <regexp pattern="&lt;creationDate&gt;.*&lt;/creationDate&gt;" replace="&lt;creationDate&gt;${build.date}&lt;/creationDate&gt;" />
+                </replaceregexp>
+            </filterchain>
+        </copy>
+
+        <!-- Create the two factor plugin package -->
+        <zip
+                destfile="${dirs.release}/plg_authentication_facebook.zip"
+                includeemptydirs="true">
+            <fileset refid="auth_facebook" />
+        </zip>
+
+    </target>
+
+    <target name="build-user-facebook" description="Build the user plugin for Facebook Login"
+            depends="new-release,setup-properties">
+
+        <if>
+            <available file="${dirs.plugins}/user/facebook/facebook.xml" property="ignored" />
+            <then>
+                <copy file="${dirs.plugins}/user/facebook/facebook.xml" tofile="${dirs.plugins}/user/facebook/facebook.xml" overwrite="true">
+                    <filterchain>
+                        <replaceregexp>
+                            <regexp pattern="&lt;version&gt;.*&lt;/version&gt;" replace="&lt;version&gt;${version}&lt;/version&gt;" />
+                            <regexp pattern="&lt;creationDate&gt;.*&lt;/creationDate&gt;" replace="&lt;creationDate&gt;${build.date}&lt;/creationDate&gt;" />
+                        </replaceregexp>
+                    </filterchain>
+                </copy>
+
+                <!-- Create the two factor plugin package -->
+                <zip
+                        destfile="${dirs.release}/plg_user_facebook.zip"
+                        includeemptydirs="true">
+                    <fileset refid="user_facebook" />
+                </zip>
+            </then>
+        </if>
+
+    </target>
+
+</project>
