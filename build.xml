@@ -14,20 +14,6 @@
 
     <!--
     ====================================================================================================
-    File sets
-    ====================================================================================================
-    -->
-
-    <fileset dir="${dirs.plugins}/authentication/facebook" id="auth_facebook">
-        <include name="**" />
-    </fileset>
-
-    <fileset dir="${dirs.plugins}/user/facebook" id="user_facebook">
-        <include name="**" />
-    </fileset>
-
-    <!--
-    ====================================================================================================
     Tasks - General
     ====================================================================================================
     -->
@@ -71,8 +57,11 @@
 	====================================================================================================
 	-->
 
+    <!--
+    Builds the installable ZIP package which will be distributed to the users
+    -->
     <target name="build-pkg" description="Builds the Joomla package file"
-            depends="build-auth-facebook,build-user-facebook">
+            depends="build-plugins">
 
         <copy file="${dirs.root}/pkg_facebooklogin.xml" tofile="${dirs.release}/pkg_facebooklogin.xml" overwrite="true">
             <filterchain>
@@ -108,10 +97,38 @@
         </delete>
     </target>
 
-    <target name="build-auth-facebook" description="Build the authentication plugin for Facebook Login"
-            depends="new-release,setup-properties">
+    <!--
+	Builds all the plugins found in the plugins/* folders of the repository
+	-->
+    <target name="build-plugins" description="Build all plugins" depends="new-release,setup-properties">
+        <foreach param="dirname" absparam="absname" target="build-plugin-folder">
+            <fileset dir="${dirs.plugins}">
+                <type type="dir" />
+                <depth max="0" min="0" />
+            </fileset>
+        </foreach>
+    </target>
 
-        <copy file="${dirs.plugins}/authentication/facebook/facebook.xml" tofile="${dirs.plugins}/authentication/facebook/facebook.xml" overwrite="true">
+    <!--
+    Internal builder task to process all plugins inside a plugin folder in the repository, e.g. plugins/user
+    -->
+    <target name="build-plugin-folder" description="Iterate over the plugins in an area (authentication, user, ...) directory">
+        <property name="plugin_area" value="${dirname}" />
+
+        <foreach param="plugin_name" absparam="plugin_dir" target="build-plugin-item">
+            <fileset dir="${absname}">
+                <type type="dir" />
+                <depth max="0" min="0" />
+            </fileset>
+        </foreach>
+    </target>
+
+    <!--
+    Internal builder task to create the installable ZIP package of a single plugin
+    -->
+    <target name="build-plugin-item" description="Builds a plugin's installable ZIP package">
+        <tempfile property="temp.file" destdir="${dirs.root}" />
+        <copy file="${dirs.plugins}/${plugin_area}/${plugin_name}/${plugin_name}.xml" tofile="${temp.file}" overwrite="true">
             <filterchain>
                 <replaceregexp>
                     <regexp pattern="&lt;version&gt;.*&lt;/version&gt;" replace="&lt;version&gt;${version}&lt;/version&gt;" />
@@ -119,40 +136,16 @@
                 </replaceregexp>
             </filterchain>
         </copy>
+        <move file="${temp.file}" tofile="${dirs.plugins}/${plugin_area}/${plugin_name}/${plugin_name}.xml" overwrite="true" />
 
         <!-- Create the two factor plugin package -->
         <zip
-                destfile="${dirs.release}/plg_authentication_facebook.zip"
+                destfile="${dirs.release}/plg_${plugin_area}_${plugin_name}.zip"
                 includeemptydirs="true">
-            <fileset refid="auth_facebook" />
+            <fileset dir="${dirs.plugins}/${plugin_area}/${plugin_name}">
+                <include name="**" />
+            </fileset>
         </zip>
-
-    </target>
-
-    <target name="build-user-facebook" description="Build the user plugin for Facebook Login"
-            depends="new-release,setup-properties">
-
-        <if>
-            <available file="${dirs.plugins}/user/facebook/facebook.xml" property="ignored" />
-            <then>
-                <copy file="${dirs.plugins}/user/facebook/facebook.xml" tofile="${dirs.plugins}/user/facebook/facebook.xml" overwrite="true">
-                    <filterchain>
-                        <replaceregexp>
-                            <regexp pattern="&lt;version&gt;.*&lt;/version&gt;" replace="&lt;version&gt;${version}&lt;/version&gt;" />
-                            <regexp pattern="&lt;creationDate&gt;.*&lt;/creationDate&gt;" replace="&lt;creationDate&gt;${build.date}&lt;/creationDate&gt;" />
-                        </replaceregexp>
-                    </filterchain>
-                </copy>
-
-                <!-- Create the two factor plugin package -->
-                <zip
-                        destfile="${dirs.release}/plg_user_facebook.zip"
-                        includeemptydirs="true">
-                    <fileset refid="user_facebook" />
-                </zip>
-            </then>
-        </if>
-
     </target>
 
 </project>
