@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="facebookauth"
-         basedir="." description="Facebook Authentication plugins for Joomla"
+         basedir="." description="Facebook Authentication plugin for Joomla"
          default="all">
 
     <property file="./build.properties" />
