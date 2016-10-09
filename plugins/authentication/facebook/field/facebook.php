@@ -7,8 +7,6 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-use Joomla\Registry\Registry;
-
 defined('_JEXEC') or die;
 
 /**
