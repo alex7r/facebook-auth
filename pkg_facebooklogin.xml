@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.7" type="package" method="upgrade">
+    <name>Facebook Login</name>
+    <author>Joomla! Project</author>
+    <creationDate>##DATE##</creationDate>
+    <packagename>facebooklogin</packagename>
+    <version>##VERSION##</version>
+    <url>https://www.joomla.org</url>
+    <packager>Joomla! Project</packager>
+    <packagerurl>https://www.joomla.org</packagerurl>
+    <copyright>Copyright (C) 2005 - 2016 Open Source Matters. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <description>Facebook Login v.##VERSION##</description>
+
+    <!-- List of extensions to install -->
+    <files>
+        <!-- Frontend Modules -->
+        <!--<file type="module" client="site" id="mod_example">mod_example.zip</file>-->
+
+        <!-- Backend Modules -->
+        <!--<file type="module" client="admin" id="mod_example">mod_example.zip</file>-->
+
+        <!-- Plugins: authentication -->
+        <file type="plugin" group="authentication" id="facebook">plg_authentication_facebook.zip</file>
+
+        <!-- Plugins: user -->
+        <!--<file type="plugin" group="user" id="facebook">plg_user_facebook.zip</file>-->
+    </files>
+
+    <!-- Installation script -->
+    <!--<scriptfile>script.facebook.php</scriptfile>-->
+
+    <!-- Update servers -->
+    <!--
+    <updateservers>
+        <server type="extension" priority="1" name="Facebook Login">https://github.com/joomla-extensions/facebook-auth/blob/master/update.xml</server>
+    </updateservers>
+    -->
+</extension>

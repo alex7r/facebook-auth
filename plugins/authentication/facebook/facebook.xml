@@ -7,14 +7,14 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
-	<version>3.7.0</version>
+	<version>1.0.0</version>
 	<description>PLG_AUTHENTICATION_FACEBOOK_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="facebook">facebook.php</filename>
 	</files>
-	<languages>
-		<language tag="en-GB">en-GB.plg_authentication_facebook.ini</language>
-		<language tag="en-GB">en-GB.plg_authentication_facebook.sys.ini</language>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_authentication_facebook.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_authentication_facebook.sys.ini</language>
 	</languages>
 	<config>
 		<fields name="params">
