@@ -16,11 +16,7 @@ Bug reports and feature requests are very welcome but please do check if the sam
 
 ## Translations
 
-Up to date translation files are automatically included whenever we're making a new release of this plugin. There are no installable packages for individual languages.
-
-Translations are managed through the [Joomla! Official Extensions project on Crowdin](https://crowdin.com/project/joomla-patchtester). The Joomla! Production Leadership Team has installed automated code in this repository to synchronise the language files with the Crowdin project.
-
-If you are interested in becoming a translator please contact the translation team leader, [Marc Antoine Thevenet](https://crowdin.com/mail/compose/MAT978) on Crowdin. If you have questions about obtaining language packages please ask your question on the [Language board of the official Joomla! forum](http://forum.joomla.org/viewforum.php?f=711&sid=d94ca64e6a536ec2fa41651a1773395b). If you have suggestions about the language build process please contact the Joomla! Production Leadership Team as they ultimately have the last word on that.
+Translations are managed through the [Joomla! Official Extensions project on Crowdin](https://crowdin.com/project/joomla-patchtester). We currently do not have any instructions for installing additional languages of this plugin.
 
 ## Credits
 
